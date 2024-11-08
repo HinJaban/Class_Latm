@@ -5,18 +5,14 @@
 enum State
 {
     Ne_Zahvachen,    // int=0; S0 - груз не захвачен
-    Zahvachen,       // int=1; S1 - груз захвачен
-    Kran_Podnyat_Na, // int=2; S2 - груз поднят на N метров, максимум поднимается до высоты согласно возможностям ПТМ
-    Kran_Opuschen_Na // int=3; S3 - груз опущен на N метров, максимум опускается до нуля
-                     //  S4, Если состояние Груз_Упал, Масса груза уменьшается на определенное число в
-    // в зависимости оттого, на какой высоте z упал груз, масса которого превышает грузоподъемность
+    Zahvachen     // int=1; S1 - груз захвачен
 };
 State st = Ne_Zahvachen;
-void Latm::inputLatm(char *TypeLatmT, float MaxMassaM, int heightH, int CordX, int CordY, int CordZ, float MassaBoxM, int CordX1, int CordY1, int CordZ1)
+void Latm::inputLatm(char *TypeLatmT, float MaxMassaM, int heightH, int CordX, int CordY, float MassaBoxM, int CordX1, int CordY1)
 {
     TypeLatm = new char[strlen(TypeLatmT) + 1];
     strcpy(TypeLatm, TypeLatmT);
-    MaxMassa = MaxMassaM, x = CordX, y = CordY, z = CordZ, x1 = CordX1, y1 = CordY1, z1 = CordZ1, MassaBox = MassaBoxM, height = heightH;
+    MaxMassa = MaxMassaM, x = CordX, y = CordY, z = 0, x1 = CordX1, y1 = CordY1, z1 = 0, MassaBox = MassaBoxM, height = heightH;
 }
 void Latm::destructor()
 {
@@ -70,10 +66,7 @@ void Latm::LatmTravel(int x2, int y2)
 void Latm::LatmToBox()
 {
     setlocale(LC_ALL, "ru_RU.UTF-8");
-    if (x == x1 && y == y1)
-    {
-        std::cout << "ПТМ уже впритык к грузу" << std::endl;
-    }
+    if (x == x1 && y == y1);
     else
     {
         x = x1;
@@ -136,31 +129,69 @@ void Status(State st)
     case 1:
         std::cout << "Zahvachen" << std::endl;
         break;
+    
+    }
+}
+void Reaction(int y)
+{
+    setlocale(LC_ALL, "ru_RU.UTF-8");
+    switch (y)
+    {
+    case 1:
+        std::cout << "вывод информации о характеристиках ПТМ " << std::endl;
+        break;
     case 2:
-        std::cout << "Kran_Podnyat_Na" << std::endl;
+        std::cout << "ПТМ впритык к грузу " << std::endl;
         break;
     case 3:
-        std::cout << "Kran_Opuschen_Na" << std::endl;
+        std::cout << "ПТМ использовал захватчик " << std::endl;
         break;
+    case 4:
+        std::cout << "ПТМ поднял кран до высоты ";
+        break;
+    case 5: 
+     std::cout << "ПТМ поднял кран до высоты ";
+    break;
+    case 6:
+     std::cout << "ПТМ переместился в другие координаты " << std::endl;
+    break;
+    case 7:
+    std::cout << "ПТМ отключил режим захватчика " << std::endl;
+    break;
+    case 8:
+    std::cout << "x1 - получить информацию об характеристиках ПТМ" << std::endl;
+                std::cout << "x2 - подъехать к грузу" << std::endl;
+            std::cout << "x3 - захватить груз" << std::endl;
+            std::cout << "x4 - поднять кран до высоты h" << std::endl;
+            std::cout << "x5 - опустить кран до высоты h" << std::endl;
+            std::cout << "x6 - переместиться в другие координаты x,y" << std::endl;
+            std::cout << "x7 - положить груз"<< std::endl;
+            std::cout << "x9 - узнать текущее состояние"<< std::endl;
+            std::cout << "x10 - получить информацию о характеристике груза"<< std::endl;
+            std::cout << "x11 - Завершить работу программы"<< std::endl;
+    break;
+    case 9:
+    std::cout << "Текущее состояние: ";
+    Status(st);
+    std::cout << std::endl; break;
+    case 10: 
+    std::cout << "вывод информации о характеристиках груза " << std::endl;
+    break;
+    case 11: 
+    std::cout << "Работа программы остановлена" << std::endl;
+    break;
     }
+
 }
 void Latm::InfoLatm() const
 {
     setlocale(LC_ALL, "ru_RU.UTF-8");
     std::cout << "Подъемно-транспортная машина : " << GetTypeLatm() << std::endl;
     std::cout << "Грузоподъемность - " << GetMaxMassa() << std::endl;
-    std::cout << "Координата X - " << GetX() << std::endl;
-    std::cout << "Координата Y - " << GetY() << std::endl;
+    std::cout << "Координата ПТМ по X - " << GetX() << std::endl;
+    std::cout << "Координата ПТМ по Y - " << GetY() << std::endl;
+    std::cout << "Координата захватчика по Z - " << GetZ() << std::endl;
     std::cout << "Максимальная высота подъема груза - " << GetHeight() << std::endl;
-    std::cout << "текущее состояние  - ";
-    Status(st);
-    std::cout << std::endl;
-    // if(состояние = Груз_Захвачен) {
-    // std::cout << "Вес груза - " << GetMassa() << std::endl;
-    // }
-    // else {
-    // std::cout << "Вес груза неизвестен"<<std::endl;
-    // }
 }
 void Latm::InfoBox() const
 {
@@ -168,7 +199,7 @@ void Latm::InfoBox() const
     std::cout << "Масса груза - " << GetMassaBox() << std::endl;
     std::cout << "Координата x груза - " << GetX1() << std::endl;
     std::cout << "Координата y груза - " << GetY1() << std::endl;
-    // придумать, что типа из 1000 допустимой грузоподъемности осталось 843
+    std::cout << "Координата z груза - " << GetZ1() << std::endl;
 }
 
 void Latm::Take()
@@ -217,6 +248,7 @@ void Latm::Put()
         {
             std::cout << "Вышвырнули груз" << std::endl;
             LatmTake = false;
+            SetZ1(0);
         }
     }
 }
@@ -224,9 +256,10 @@ void Latm::Put()
 void Latm::Up(int heightH)
 {
     setlocale(LC_ALL, "ru_RU.UTF-8");
+    
     if (heightH > GetZ())
     { // если соблюдается, то значит мы поднимаем с меньшей на большую высоту
-        if (!LatmTake)//st == Ne_Zahvachen
+        if (!Proverka())//st == Ne_Zahvachen
         {
             if (heightH > height)
             {
@@ -239,7 +272,7 @@ void Latm::Up(int heightH)
                 std::cout << "Поднял кран до " << heightH << " метров" << std::endl;
             }
         }
-        if (LatmTake)//st == Zahvachen
+        if (Proverka())//st == Zahvachen
         {
             if (heightH > height)
             {
@@ -279,7 +312,7 @@ void Latm::Down(int heightH)
             }
             else
             {
-                SetZ(height - heightH);
+                SetZ(heightH);
                 std::cout << "Опустил кран до " << heightH << " метров" << std::endl;
             }
         }
@@ -310,47 +343,62 @@ void Latm::Down(int heightH)
 }
 
 /*
-x1 - получить информацию об характеристиках и текущем состоянии ПТМ
+x1 - получить информацию о характеристиках ПТМ
 x2 - подъехать к грузу
 x3 - захватить груз
 x4 - поднять кран до высоты h
 x5 - опустить кран до высоты h
 x6 - переместиться в другие координаты x,y
 x7 - положить груз
+x8 - увидеть доступные входные сигналы
+x9 - узнать текущее состояние
+x10 - получить информацию о характеристиках груза
 
-y1 - вывод информации об объекте ПТМ
+y1 - вывод информации о характеристиках ПТМ
 y2 - ПТМ впритык к грузу
-y3 - ПТМ захватил груз
-y4 - ПТМ поднял кран до высоты h
-y5 - ПТМ опустил кран до высоты h
-y6 - ПТМ переместился из координат (x1,y1) в координаты (x2,y2) совершив путь S метров
-y7 - Вывод информации о характеристике груза и его текущем положении
+y3 - ПТМ использовал захватчик
+y4 - ПТМ поднял кран до высоты
+y5 - ПТМ опустил кран до высоты
+y6 - ПТМ переместился в другие координаты x,y
+y7 - ПТМ отключил режим захватчика
+y8 - Вывод доступных входных сигналов
+y9 - Вывод текущего состояния
+y10- вывод информации о характеристиках груза
  */
 
 int main()
 {
     setlocale(LC_ALL, "ru_RU.UTF-8");
     Latm PTM;
-    PTM.inputLatm("Loader", 200.5, 4, 0, 0, 0, 150.49, 5, 3, 0); // инициализация конструктором с 8-ю параметрами
+    PTM.inputLatm("Loader", 200.5, 4, 0, 0, 150.49, 5, 3); // инициализация конструктором с 8-ю параметрами
+
     
     PTM.InfoLatm();
-    int x1 = 1, // int=0
-        x2 = 2, // int= 1
-        x3 = 3, // int= 2
-        x4 = 4, // int=3
-        x5 = 5, // int=4
-        x6 = 6, // int=5
-        x7 = 7; // int=6
+    int x1 = 1, // int=1
+        x2 = 2, // int=2
+        x3 = 3, // int=3
+        x4 = 4, // int=4
+        x5 = 5, // int=5
+        x6 = 6, // int=6
+        x7 = 7, // int=7
+        x8=8, //int=8
+        x9=9, //int=9
+        x10=10, // int=10
+        x11=11; //int=10
 
-    int y1, // int=0
-        y2, // int=1
-        y3, // int=2
-        y4, // int=3
-        y5, // int=4
-        y6, // int=5
-        y7; // int=6
+    int y1=1, // int=0
+        y2=2, // int=1
+        y3=3, // int=2
+        y4=4, // int=3
+        y5=5, // int=4
+        y6=6, // int=5
+        y7=7, // int=6
+        y8=8, // int=8
+        y9=9, //int=9
+        y10=10, //int=10
+        y11=11;
     bool exit = true;
-    int cnt = 0;
+    
     do
     {
         int x;
@@ -358,49 +406,52 @@ int main()
         switch (st)
         {
         case 0:
-            std::cout << "Текущее состояние: ";
-            Status(st);
-            std::cout << std::endl;
-            std::cout << "Находясь в данном состоянии вы можете ввести: " << std::endl;
-            std::cout << "x3 - захватить груз" << std::endl;
-            std::cout << "x2 - подъехать к грузу" << std::endl;
-            std::cout << "x4 - поднять кран до высоты h" << std::endl;
-            std::cout << "x5 - опустить кран до высоты h" << std::endl;
-            std::cout << "x6 - переместиться в другие координаты x,y" << std::endl;
-            std::cout << "Input x:";
-            std::cin >> x;
-            if (x == x3)
+        std::cout<<"Введите x8, чтобы увидеть доступные входные сигналы"<<std::endl;
+            
+            std::cout << "Введите входной сигнал x:"<<std::endl; 
+            std::cout<<"x";
+            std::cin >> x; std::cout<<std::endl;
+            
+            if(x==x8) {
+                Reaction(y8);
+            }
+            else if(x==x10) {
+                Reaction(y10);
+                PTM.InfoBox();
+            }
+             else if(x==x11) {
+                Reaction(y11);
+                exit=false;
+            }
+            else if(x==x1){
+                Reaction(y1);
+                PTM.InfoLatm();
+            }
+            else if(x==x9) {
+                Reaction(y9);
+            }
+            else if (x == x3)
             {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-
                 st = Zahvachen;
-                std::cout << "ПТМ использует захватчик" << std::endl;
+                Reaction(y3);
                 std::cout << "Проверка (было) груз захвачен или нет, 1 если да, 0 если нет, результат: " << PTM.Proverka() << std::endl;
                 PTM.Take();
                 std::cout << "Проверка (стало) груз захвачен или нет, 1 если да, 0 если нет, результат: " << PTM.Proverka() << std::endl;
             }
             else if (x == x5)
             {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-
                 int height;
-                std::cout << "Введите высоту, до которой надо опустить захвачик, h:";
+                std::cout << "Введите высоту, до которой надо опустить захвачик "<<std::endl;
+                Reaction(y5);
                 std::cin >> height;
-
-                
-                std::cout << "ПТМ опускает кран до " << height << " метров" << std::endl;
                 std::cout << "Проверка (было): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
                 PTM.Down(height);
                 std::cout << "Проверка (стало): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                st = Kran_Opuschen_Na;
+                
             }
             else if (x == x2)
             {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-                std::cout << "ПТМ впритык к грузу" << std::endl;
+                Reaction(y2);
                 std::cout << "Проверка (было): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
                 std::cout << "Проверка (было): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
                 PTM.LatmToBox();
@@ -409,90 +460,25 @@ int main()
             }
             else if (x == x4)
             {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-
                 int N;
-                std::cout << "Введите высоту, до которой надо поднять захватчик, h:";
+                std::cout << "Введите высоту, до которой надо поднять захватчик"<<std::endl;
+                Reaction(y4);
                 std::cin >> N;
-                
-                std::cout << "ПТМ поднял кран до " << N << " метров" << std::endl;
-                std::cout << "Проверка (было): высота захватчика" << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                PTM.Up(N);
-                std::cout << "Проверка (стало): высота захватчика" << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                st = Kran_Podnyat_Na;
-            }
-            else if (x == x6)
-            {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-                int x1, y1;
-                std::cout << "Чтобы сделать перемещение, нужно ввести координаты нового положения x1,y1" << std::endl;
-                std::cout << "x1:";
-                std::cin >> x1;
-                std::cout << "y1:";
-                std::cin >> y1;
-                std::cout << "ПТМ переместился из координат (" << PTM.GetX() << "," << PTM.GetY() << ") в";
-                std::cout << " координаты (" << x1 << "," << y1 << std::endl;
-                std::cout << "Проверка (было): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
-                std::cout << "Проверка (было): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
-                PTM.LatmTravel(x1, y1);
-                std::cout << "Проверка (стало): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
-                std::cout << "Проверка (стало): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
-            }
-            break;
-
-        case 1:
-            std::cout << "Текущее состояние: ";
-            Status(st);
-            std::cout << std::endl;
-            std::cout << "Находясь в данном состоянии вы можете ввести: " << std::endl;
-            std::cout << "x4 - поднять кран до высоты h" << std::endl;
-            std::cout << "x5 - опустить кран до высоты h" << std::endl;
-            std::cout << "x6 - переместиться в другие координаты x,y" << std::endl;
-            std::cout << "x7 - положить груз" << std::endl;
-            std::cout << "Input x:";
-
-            std::cin >> x;
-            if (x == x4)
-            {
-                int height;
-                std::cout << "Введите высоту, до которой надо поднять захватчик, h:";
-                std::cin >> height;
-                
-                std::cout << "ПТМ поднимает кран до " << height << " метров" << std::endl;
                 std::cout << "Проверка (было): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                PTM.Up(height);
+                PTM.Up(N);
                 std::cout << "Проверка (стало): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                st = Kran_Podnyat_Na;
-            }
-            else if (x == x5)
-            {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-
-                int height;
-                std::cout << "Введите высоту, до которой надо опустить захвачик, h:";
-                std::cin >> height;
-
                 
-                std::cout << "ПТМ опускает кран до " << height << " метров" << std::endl;
-                std::cout << "Проверка (было): высота захватчика" << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                PTM.Down(height);
-                std::cout << "Проверка (стало): высота захватчика" << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                st = Kran_Opuschen_Na;
             }
             else if (x == x6)
             {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-
+                Reaction(y6);
                 int x1, y1;
                 std::cout << "Чтобы сделать перемещение, нужно ввести координаты нового положения x1,y1" << std::endl;
                 std::cout << "x1:";
                 std::cin >> x1;
                 std::cout << "y1:";
                 std::cin >> y1;
+                Reaction(y6);
                 std::cout << "Проверка (было): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
                 std::cout << "Проверка (было): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
                 PTM.LatmTravel(x1, y1);
@@ -501,149 +487,111 @@ int main()
             }
             else if (x == x7)
             {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-
-                st = Ne_Zahvachen;
+                Reaction(y7);
                 std::cout << "Проверка (было) груз положен или нет, 0 если да, 1 если нет, результат: " << PTM.Proverka() << std::endl;
                 PTM.Put();
                 std::cout << "Проверка (стало) груз положен или нет, 0 если да, 1 если нет, результат: " << PTM.Proverka() << std::endl;
-                exit = false;
-                cnt++;
             }
             break;
 
-        case 2:
-            std::cout << "Находясь в данном состоянии вы можете ввести: " << std::endl;
-            std::cout << "x4 - поднять кран до высоты h" << std::endl;
-            std::cout << "x7 - положить груз" << std::endl;
-            std::cout << "x5 - опустить кран до высоты h" << std::endl;
-            std::cout << "x6 - переместиться в другие координаты x,y" << std::endl;
-            std::cout << "Input x:";
 
-            std::cin >> x;
-            if (x == x4)
-            {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-                int height;
-                std::cout << "Введите высоту, до которой надо поднять захватчик, h:";
-                std::cin >> height;
-                std::cout << "Проверка (было): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                PTM.Up(height);
-                std::cout << "Проверка (стало): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
+        case 1:
+            std::cout<<"Введите x8, чтобы увидеть доступные входные сигналы"<<std::endl;
+            std::cout << "Введите входной сигнал x:"<<std::endl; 
+            std::cout<<"x";
+            std::cin >> x; std::cout<<std::endl;
+             if(x==x8) {
+                Reaction(y8);
             }
-            else if (x == x7)
-            {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-
-                st = Ne_Zahvachen;
-                std::cout << "Проверка (было) груз положен или нет, 0 если да, 1 если нет, результат: " << PTM.Proverka() << std::endl;
-                PTM.Put();
-                std::cout << "Проверка (стало) груз положен или нет, 0 если да, 1 если нет, результат:  " << PTM.Proverka() << std::endl;
-                exit = false;
-                cnt++;
+            else if(x==x10) {
+                Reaction(y10);
+                PTM.InfoBox();
             }
-            else if (x == x5)
-            {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-                int height;
-                std::cout << "Введите высоту, до которой надо опустить захватчик, h:";
-                std::cin >> height;
-                std::cout << "Проверка (было): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                PTM.Down(height);
-                std::cout << "Проверка (стало): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                st = Kran_Opuschen_Na;
+            else if(x==x11) {
+                Reaction(y11);
+                exit=false;
             }
-            else if (x == x6)
-            {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-                int x1, y1;
-                std::cout << "Чтобы сделать перемещение, нужно ввести координаты нового положения x1,y1" << std::endl;
-                std::cout << "x1:";
-                std::cin >> x1;
-                std::cout << "y1:";
-                std::cin >> y1;
-                std::cout << "ПТМ переместился из координат (" << PTM.GetX() << "," << PTM.GetY() << ") в";
-                std::cout << " координаты (" << x1 << "," << y1 << ")" << std::endl;
-                std::cout << "Проверка (было): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
-                std::cout << "Проверка (было): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
-                PTM.LatmTravel(x1, y1);
-                std::cout << "Проверка (стало): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
-                std::cout << "Проверка (стало): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
+            else if(x==x1){
+                Reaction(y1);
+                PTM.InfoLatm();
             }
-            break;
-        case 3:
-        std::cout << "Текущее состояние: ";
-            Status(st);
-            std::cout << "Находясь в данном состоянии вы можете ввести: " << std::endl;
-            std::cout << "x6 - переместиться в другие координаты x,y" << std::endl;
-            std::cout << "x5 - опустить кран до высоты h" << std::endl;
-            std::cout << "x4 - поднять кран до высоты h" << std::endl;
-            std::cout << "x7 - положить груз" << std::endl;
-            std::cout << "Input x:";
-
-            std::cin >> x;
-            if (x == x6)
-            {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-                int x1, y1;
-                std::cout << "Чтобы сделать перемещение, нужно ввести координаты нового положения x1,y1" << std::endl;
-                std::cout << "x1:";
-                std::cin >> x1;
-                std::cout << "y1:";
-                std::cin >> y1;
-                std::cout << "ПТМ переместился из координат (" << PTM.GetX() << "," << PTM.GetY() << ") в";
-                std::cout << " координаты (" << x1 << "," << y1 << std::endl;
-                std::cout << "Проверка (было): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
-                std::cout << "Проверка (было): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
-                PTM.LatmTravel(x1, y1);
-                std::cout << "Проверка (стало): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
-                std::cout << "Проверка (стало): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
-            }
-            else if (x == x5)
-            {
-                std::cout << "Текущее состояние: ";
-            Status(st);
-                int height_;
-                std::cout << "Введите высоту, до которой надо опустить захватчик, h:";
-                std::cin >> height_;
-                std::cout << "Проверка (было): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                PTM.Down(height_);
-                std::cout << "Проверка (стало): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
+            else if(x==x9) {
+                Reaction(y9);
             }
             else if (x == x4)
             {
-                std::cout << "Текущее состояние: ";
-            Status(st);
                 int height;
-                std::cout << "Введите высоту, до которой надо поднять захватчик, h:";
+                std::cout << "Введите высоту, до которой надо поднять захватчик"<<std::endl;
                 std::cin >> height;
                 
+                Reaction(y4);
                 std::cout << "Проверка (было): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
                 PTM.Up(height);
                 std::cout << "Проверка (стало): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
-                st = Kran_Podnyat_Na;
+            }
+            else if (x == x2)
+            {
+                
+                Reaction(y2);
+                std::cout << "Проверка (было): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
+                std::cout << "Проверка (было): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
+                PTM.LatmToBox();
+                std::cout << "Проверка (стало): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
+                std::cout << "Проверка (стало): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
+            }
+            else if (x == x3)
+            {
+                
+                st = Zahvachen;
+                Reaction(y3);
+                std::cout << "Проверка (было) груз захвачен или нет, 1 если да, 0 если нет, результат: " << PTM.Proverka() << std::endl;
+                PTM.Take();
+                std::cout << "Проверка (стало) груз захвачен или нет, 1 если да, 0 если нет, результат: " << PTM.Proverka() << std::endl;
+            }
+            else if (x == x5)
+            {
+                
+
+                int height;
+                std::cout << "Введите высоту, до которой надо опустить захвачик"<<std::endl;
+                Reaction(y5);
+                std::cin >> height;
+                std::cout << "ПТМ опускает кран до " << height << " метров" << std::endl;
+                std::cout << "Проверка (было): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
+                PTM.Down(height);
+                std::cout << "Проверка (стало): высота захватчика " << PTM.GetZ() << ", высота груза " << PTM.GetZ1() << std::endl;
+            }
+            else if (x == x6)
+            {
+            
+
+                int x1, y1;
+                std::cout << "Чтобы сделать перемещение, нужно ввести координаты нового положения x1,y1" << std::endl;
+                std::cout << "x1:";
+                std::cin >> x1;
+                std::cout << "y1:";
+                std::cin >> y1;
+                Reaction(y6);
+                std::cout << "Проверка (было): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
+                std::cout << "Проверка (было): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
+                PTM.LatmTravel(x1, y1);
+                std::cout << "Проверка (стало): координаты ПТМ (" << PTM.GetX() << "," << PTM.GetY() << ")" << std::endl;
+                std::cout << "Проверка (стало): координаты груза (" << PTM.GetX1() << "," << PTM.GetY1() << ")" << std::endl;
             }
             else if (x == x7)
             {
-                std::cout << "Текущее состояние: ";
-            Status(st);
                 st = Ne_Zahvachen;
+                Reaction(y7);
                 std::cout << "Проверка (было) груз положен или нет, 0 если да, 1 если нет, результат: " << PTM.Proverka() << std::endl;
                 PTM.Put();
                 std::cout << "Проверка (стало) груз положен или нет, 0 если да, 1 если нет, результат: " << PTM.Proverka() << std::endl;
-                exit = false;
-                cnt++;
             }
             break;
+
+       
         }
 
-    } while (cnt != 100);
+    } while (exit);
 
     PTM.destructor();
 }

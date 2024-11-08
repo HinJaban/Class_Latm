@@ -22,7 +22,7 @@ public:
     void SetX(int CordX);
     void SetY(int CordY);
     void SetZ(int CordZ);
-    void inputLatm(char *TypeLatmT, float MaxMassaM, int heightH, int CordX, int CordY, int CordZ, float MassaBoxM, int CordX1, int CordY1, int CordZ1);
+    void inputLatm(char *TypeLatmT, float MaxMassaM, int heightH, int CordX, int CordY, float MassaBoxM, int CordX1, int CordY1);
     void SetTypeLatm(char *TypeLatmT);
     void SetX1(int CordX);
     void SetY1(int CordY);
